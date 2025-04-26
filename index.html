@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub User Tracker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --github-dark: #0d1117;
+            --github-bg: #161b22;
+            --github-border: #30363d;
+            --github-text: #c9d1d9;
+            --github-secondary-text: #8b949e;
+            --github-primary: #58a6ff;
+            --github-success: #3fb950;
+            --github-danger: #f85149;
+            --github-warning: #d29922;
+            --github-purple: #8957e5;
+            --github-orange: #db6d28;
+            --github-hover: #21262d;
+            --github-accent: #238636;
+            --github-accent-hover: #2ea043;
+        }
+        
+        body {
+            background-color: var(--github-dark);
+            color: var(--github-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1000px;
+        }
+        
+        .app-header {
+            padding: 16px 0;
+            margin-top: 16px;
+            border-bottom: 1px solid var(--github-border);
+        }
+        
+        .app-title {
+            font-weight: 600;
+            font-size: 24px;
+            color: var(--github-text);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            color: var(--github-text);
+        }
+        
+        .search-container {
+            background: var(--github-bg);
+            border: 1px solid var(--github-border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+        
+        .search-input {
+            background-color: var(--github-dark);
+            border: 1px solid var(--github-border);
+            color: var(--github-text);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .search-input:focus {
+            background-color: var(--github-dark);
+            border-color: var(--github-primary);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+            color: var(--github-text);
+            outline: none;
+        }
+        
+        .search-btn {
+            background-color: var(--github-accent);
+            border: 1px solid rgba(240, 246, 252, 0.1);
+            color: #ffffff;
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--github-accent-hover);
+            color: #ffffff;
+        }
+        
+        .profile-container {
+            background: var(--github-bg);
+            border: 1px solid var(--github-border);
+            border-radius: 6px;
+            padding: 0;
+            margin-top: 24px;
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            background: var(--github-dark);
+            padding: 16px;
+            border-bottom: 1px solid var(--github-border);
+        }
+        
+        .profile-info {
+            padding: 24px;
+        }
+        
+        .profile-img {
+            width: 100%;
+            max-width: 296px;
+            border-radius: 6px;
+            border: 1px solid var(--github-border);
+        }
+        
+        .profile-username {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--github-text);
+            margin-top: 16px;
+        }
+        
+        .profile-login {
+            font-size: 20px;
+            font-weight: 300;
+            color: var(--github-secondary-text);
+            margin-bottom: 16px;
+        }
+        
+        .profile-bio {
+            color: var(--github-text);
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--github-border);
+        }
+        
+        .status-badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 2em;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        
+        .status-active {
+            background-color: var(--github-success);
+            color: #ffffff;
+        }
+        
+        .status-inactive {
+            background-color: var(--github-secondary-text);
+            color: #ffffff;
+        }
+        
+        .status-banned {
+            background-color: var(--github-danger);
+            color: #ffffff;
+        }
+        
+        .stats-container {
+            margin-top: 16px;
+        }
+        
+        .stat-item {
+            background: var(--github-dark);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--github-border);
+            transition: background-color 0.2s ease;
+        }
+        
+        .stat-item:hover {
+            background-color: var(--github-hover);
+        }
+        
+        .stat-icon {
+            color: var(--github-secondary-text);
+            margin-right: 12px;
+            font-size: 16px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 500;
+            color: var(--github-text);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--github-secondary-text);
+            margin-bottom: 0;
+        }
+        
+        .social-links {
+            margin-top: 24px;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: var(--github-dark);
+            color: var(--github-secondary-text);
+            margin-right: 8px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--github-border);
+        }
+        
+        .social-link:hover {
+            background-color: var(--github-hover);
+            color: var(--github-primary);
+        }
+        
+        .repo-link {
+            display: block;
+            padding: 12px;
+            background-color: var(--github-accent);
+            color: #ffffff;
+            text-align: center;
+            font-weight: 500;
+            border-radius: 6px;
+            margin-top: 16px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            border: 1px solid rgba(240, 246, 252, 0.1);
+        }
+        
+        .repo-link:hover {
+            background-color: var(--github-accent-hover);
+            color: #ffffff;
+        }
+        
+        .footer {
+            margin-top: 24px;
+            padding: 16px 0;
+            font-size: 12px;
+            color: var(--github-secondary-text);
+            text-align: center;
+            border-top: 1px solid var(--github-border);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 24px;
+        }
+        
+        .loading-spinner {
+            color: var(--github-primary);
+            width: 24px;
+            height: 24px;
+        }
+        
+        .badge {
+            margin-right: 4px;
+            margin-bottom: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 2em;
+        }
+        
+        .badge-success {
+            background-color: var(--github-success);
+            color: #ffffff;
+        }
+        
+        .badge-primary {
+            background-color: var(--github-primary);
+            color: #ffffff;
+        }
+        
+        .badge-danger {
+            background-color: var(--github-danger);
+            color: #ffffff;
+        }
+        
+        .badge-warning {
+            background-color: var(--github-warning);
+            color: #ffffff;
+        }
+        
+        .badge-purple {
+            background-color: var(--github-purple);
+            color: #ffffff;
+        }
+        
+        .error-message {
+            color: var(--github-danger);
+            background-color: rgba(248, 81, 73, 0.1);
+            border: 1px solid rgba(248, 81, 73, 0.2);
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .repo-links {
+            margin-top: 16px;
+        }
+        
+        .repo-item {
+            display: block;
+            padding: 12px;
+            background-color: var(--github-dark);
+            color: var(--github-text);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            border: 1px solid var(--github-border);
+        }
+        
+        .repo-item:hover {
+            background-color: var(--github-hover);
+            color: var(--github-primary);
+        }
+        
+        .repo-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--github-primary);
+        }
+        
+        .repo-desc {
+            font-size: 12px;
+            color: var(--github-secondary-text);
+            margin-bottom: 0;
+        }
+        
+        .repo-stats {
+            font-size: 12px;
+            color: var(--github-secondary-text);
+            margin-top: 8px;
+            display: flex;
+            gap: 16px;
+        }
+        
+        .repo-stat {
+            display: flex;
+            align-items: center;
+        }
+        
+        .repo-stat-icon {
+            margin-right: 4px;
+        }
+        
+        .tab-content {
+            padding: 16px;
+            border: 1px solid var(--github-border);
+            border-top: 0;
+            border-radius: 0 0 6px 6px;
+            background-color: var(--github-bg);
+        }
+        
+        .nav-tabs {
+            border-bottom: 1px solid var(--github-border);
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--github-secondary-text);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px 6px 0 0;
+            font-size: 14px;
+            margin-right: 4px;
+            background-color: transparent;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            background-color: var(--github-hover);
+            color: var(--github-text);
+            border-bottom: none;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--github-text);
+            background-color: var(--github-bg);
+            border-color: var(--github-border);
+            border-style: solid;
+            border-width: 1px;
+            border-bottom-color: var(--github-bg);
+            font-weight: 500;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 2em;
+            background-color: var(--github-hover);
+            color: var(--github-secondary-text);
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        
+        .counter {
+            background-color: rgba(110, 118, 129, 0.4);
+            padding: 2px 5px;
+            border-radius: 24px;
+            font-size: 12px;
+            margin-left: 4px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="app-header d-flex justify-content-between align-items-center">
+            <h1 class="app-title">
+                <i class="fab fa-github logo-icon"></i>GitHub User Tracker
+            </h1>
+            <span class="text-muted small">Track and analyze GitHub profiles</span>
+        </div>
+
+        <!-- Search box -->
+        <div class="search-container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" id="userInput" class="form-control search-input" placeholder="Enter GitHub Username">
+                        <button id="getProfileBtn" class="btn search-btn">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="loading">
+            <div class="spinner-border loading-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Fetching user data...</p>
+        </div>
+
+        <!-- Profile Container -->
+        <div id="profileContainer" class="profile-container" style="display: none;">
+            <div class="profile-header">
+                <h3 class="m-0 fs-4"><i class="fas fa-user me-2"></i>User Profile</h3>
+            </div>
+            <div class="profile-info">
+                <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+                            <i class="fas fa-home me-1"></i> Overview
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="repos-tab" data-bs-toggle="tab" data-bs-target="#repos" type="button" role="tab" aria-controls="repos" aria-selected="false">
+                            <i class="fas fa-book me-1"></i> Repositories <span class="counter" id="repoCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="followers-tab" data-bs-toggle="tab" data-bs-target="#followers" type="button" role="tab" aria-controls="followers" aria-selected="false">
+                            <i class="fas fa-users me-1"></i> Followers <span class="counter" id="followerCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                        <div id="userInfo">
+                            <!-- User info will be populated here -->
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="repos" role="tabpanel" aria-labelledby="repos-tab">
+                        <div id="reposList">
+                            <!-- Repositories will be populated here -->
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+                        <div id="followersList">
+                            <!-- Followers will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 GitHub User Tracker | Not affiliated with GitHub, Inc.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        // DOM elements
+        const userInput = document.getElementById('userInput');
+        const getProfileBtn = document.getElementById('getProfileBtn');
+        const userInfo = document.getElementById('userInfo');
+        const reposList = document.getElementById('reposList');
+        const followersList = document.getElementById('followersList');
+        const profileContainer = document.getElementById('profileContainer');
+        const loadingElement = document.getElementById('loading');
+        const repoCount = document.getElementById('repoCount');
+        const followerCount = document.getElementById('followerCount');
+
+        // Global variables
+        let bannedUsers = [];
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            // Load banned users when the page loads
+            loadBannedUsers();
+        });
+        
+        getProfileBtn.addEventListener('click', handleSearchClick);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSearchClick();
+            }
+        });
+
+        // Initialize
+        function init() {
+            console.log('GitHub User Tracker initialized');
+        }
+        
+        // Load banned users list
+        async function loadBannedUsers() {
+            try {
+                bannedUsers = await getBannedUsers();
+                console.log(`Loaded ${bannedUsers.length} banned users`);
+            } catch (error) {
+                console.error('Failed to load banned users:', error);
+            }
+        }
+
+        // Handle search button click
+        function handleSearchClick() {
+            const username = userInput.value.trim();
+            if (username) {
+                getUserInfo(username);
+            } else {
+                showError('Please enter a GitHub username');
+            }
+        }
+        
+        // Fetch banned users list
+        async function getBannedUsers() {
+            try {
+                const response = await fetch('https://polyextended.github.io/banned.json');
+                const data = await response.json();
+                return data.BannedUsers.map(user => user.toLowerCase()) || [];
+            } catch (error) {
+                console.error('Error fetching banned users:', error);
+                return [];
+            }
+        }
+
+        // Main function to get user info
+        async function getUserInfo(username) {
+            // Show loading and hide profile
+            showLoading(true);
+            profileContainer.style.display = 'none';
+
+            try {
+                // Check if user is banned
+                if (bannedUsers.includes(username.toLowerCase())) {
+                    renderBannedUserProfile(username);
+                    profileContainer.style.display = 'block';
+                    return;
+                }
+                
+                // Fetch user data
+                const response = await fetch(`https://api.github.com/users/${username}`);
+                if (!response.ok) {
+                    throw new Error(`User "${username}" not found or API error`);
+                }
+                
+                const userData = await response.json();
+                
+                // Fetch repositories
+                const reposResponse = await fetch(userData.repos_url);
+                const reposData = await reposResponse.json();
+                
+                // Fetch followers (limited to 10 for performance)
+                const followersResponse = await fetch(`${userData.followers_url}?per_page=10`);
+                const followersData = await followersResponse.json();
+                
+                // Update counters
+                repoCount.textContent = userData.public_repos;
+                followerCount.textContent = userData.followers;
+                
+                // Render all the data
+                renderUserProfile(userData);
+                renderRepos(reposData);
+                renderFollowers(followersData);
+                
+                // Show the profile container
+                profileContainer.style.display = 'block';
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Render banned user profile
+        function renderBannedUserProfile(username) {
+            // Create HTML content for banned user
+            let html = `
+                <div class="text-center py-4">
+                    <i class="fas fa-ban fa-4x mb-3" style="color: var(--github-danger);"></i>
+                    <h3 class="mb-3">User Banned</h3>
+                    <div class="status-badge status-banned mb-3">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        This user has been banned
+                    </div>
+                    <p>The GitHub user "${username}" is on the banned users list.</p>
+                </div>`;
+
+            // Update the DOM
+            userInfo.innerHTML = html;
+            reposList.innerHTML = '';
+            followersList.innerHTML = '';
+            showLoading(false);
+        }
+
+        // Render the user profile with all data
+        function renderUserProfile(user) {
+            // Format dates
+            const createdDate = moment(user.created_at).format('MMMM D, YYYY');
+            const updatedDate = moment(user.updated_at).format('MMMM D, YYYY');
+            
+            // Create HTML content
+            let html = `
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="${user.avatar_url}" alt="${user.login}" class="profile-img mb-3">
+                        <h2 class="profile-username">${user.name || user.login}</h2>
+                        ${user.name ? `<p class="profile-login">@${user.login}</p>` : ''}
+                        
+                        <div class="status-badge ${user.hireable ? 'status-active' : 'status-inactive'}">
+                            <i class="fas ${user.hireable ? 'fa-briefcase' : 'fa-user'} me-1"></i>
+                            ${user.hireable ? 'Available for hire' : 'Not available for hire'}
+                        </div>
+                        
+                        <div class="social-links mt-3">
+                            <a href="${user.html_url}" target="_blank" class="social-link" title="GitHub Profile">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            ${user.blog ? `
+                            <a href="${user.blog}" target="_blank" class="social-link" title="Website">
+                                <i class="fas fa-globe"></i>
+                            </a>` : ''}
+                            ${user.twitter_username ? `
+                            <a href="https://twitter.com/${user.twitter_username}" target="_blank" class="social-link" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>` : ''}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <p class="profile-bio">${user.bio || 'This user has no bio'}</p>
+                        
+                        <div class="stats-container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-users stat-icon"></i>
+                                        <div>
+                                            <div class="stat-value">${user.followers}</div>
+                                            <p class="stat-label">Followers</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-user-plus stat-icon"></i>
+                                        <div>
+                                            <div class="stat-value">${user.following}</div>
+                                            <p class="stat-label">Following</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-book stat-icon"></i>
+                                        <div>
+                                            <div class="stat-value">${user.public_repos}</div>
+                                            <p class="stat-label">Public Repositories</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-code-branch stat-icon"></i>
+                                        <div>
+                                            <div class="stat-value">${user.public_gists}</div>
+                                            <p class="stat-label">Public Gists</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex flex-wrap mt-3">
+                            ${user.company ? `
+                            <span class="badge badge-primary me-2 mb-2">
+                                <i class="fas fa-building me-1"></i> ${user.company}
+                            </span>` : ''}
+                            
+                            ${user.location ? `
+                            <span class="badge badge-success me-2 mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i> ${user.location}
+                            </span>` : ''}
+                            
+                            <span class="badge badge-warning me-2 mb-2">
+                                <i class="fas fa-calendar-alt me-1"></i> Joined ${createdDate}
+                            </span>
+                            
+                            <span class="badge badge-purple me-2 mb-2">
+                                <i class="fas fa-sync-alt me-1"></i> Updated ${updatedDate}
+                            </span>
+                        </div>
+                        
+                        <a href="${user.html_url}" target="_blank" class="repo-link">
+                            <i class="fab fa-github me-2"></i>View on GitHub
+                        </a>
+                    </div>
+                </div>`;
+
+            // Update the DOM
+            userInfo.innerHTML = html;
+        }
+
+        // Render user repositories
+        function renderRepos(repos) {
+            if (repos.length === 0) {
+                reposList.innerHTML = '<div class="text-center py-4">No public repositories found</div>';
+                return;
+            }
+            
+            // Sort by stars (most first)
+            repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+            
+            let html = '';
+            
+            // Show top 10 repositories
+            repos.slice(0, 10).forEach(repo => {
+                const updatedDate = moment(repo.updated_at).format('MMM D, YYYY');
+                
+                html += `
+                <a href="${repo.html_url}" target="_blank" class="repo-item">
+                    <div class="repo-name">
+                        <i class="fas fa-book me-1"></i> ${repo.name}
+                        ${repo.fork ? '<span class="tag"><i class="fas fa-code-branch me-1"></i>Fork</span>' : ''}
+                    </div>
+                    <div class="repo-desc">${repo.description || 'No description provided'}</div>
+                    <div class="repo-stats">
+                        ${repo.language ? `
+                        <div class="repo-stat">
+                            <i class="fas fa-circle repo-stat-icon" style="color: ${getLanguageColor(repo.language)}"></i> ${repo.language}
+                        </div>` : ''}
+                        
+                        <div class="repo-stat">
+                            <i class="fas fa-star repo-stat-icon"></i> ${repo.stargazers_count}
+                        </div>
+                        
+                        <div class="repo-stat">
+                            <i class="fas fa-code-branch repo-stat-icon"></i> ${repo.forks_count}
+                        </div>
+                        
+                        <div class="repo-stat">
+                            <i class="fas fa-history repo-stat-icon"></i> Updated on ${updatedDate}
+                        </div>
+                    </div>
+                </a>`;
+            });
+            
+            reposList.innerHTML = html;
+        }
+
+        // Render user followers
+        function renderFollowers(followers) {
+            if (followers.length === 0) {
+                followersList.innerHTML = '<div class="text-center py-4">No followers found</div>';
+                return;
+            }
+            
+            let html = '<div class="row">';
+            
+            followers.forEach(follower => {
+                html += `
+                <div class="col-md-6 mb-3">
+                    <div class="stat-item">
+                        <img src="${follower.avatar_url}" alt="${follower.login}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 12px;">
+                        <div>
+                            <div class="stat-value">${follower.login}</div>
+                            <a href="${follower.html_url}" target="_blank" class="stat-label text-decoration-none">View Profile</a>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            html += '</div>';
+            followersList.innerHTML = html;
+        }
+// Helper function to get language color
+        function getLanguageColor(language) {
+            const colors = {
+                "JavaScript": "#f1e05a",
+                "Python": "#3572A5",
+                "Java": "#b07219",
+                "TypeScript": "#2b7489",
+                "C#": "#178600",
+                "PHP": "#4F5D95",
+                "C++": "#f34b7d",
+                "C": "#555555",
+                "Ruby": "#701516",
+                "Go": "#00ADD8",
+                "Swift": "#ffac45",
+                "Kotlin": "#A97BFF",
+                "Rust": "#dea584",
+                "Dart": "#00B4AB",
+                "HTML": "#e34c26",
+                "CSS": "#563d7c",
+                "Shell": "#89e051"
+            };
+            
+            return colors[language] || "#8b949e";
+        }
+
+        // Show loading state
+        function showLoading(isLoading) {
+            loadingElement.style.display = isLoading ? 'block' : 'none';
+        }
+
+        // Show error message
+        function showError(message) {
+            profileContainer.style.display = 'block';
+            userInfo.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${message}
+                </div>
+            `;
+            reposList.innerHTML = '';
+            followersList.innerHTML = '';
+            showLoading(false);
+        }
+    </script>
+</body>
+
+</html>
