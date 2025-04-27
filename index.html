@@ -763,7 +763,7 @@
             let html = '';
             
             // Show top 10 repositories
-            repos.slice(0, 10).forEach(repo => {
+            repos.slice(0, 50).forEach(repo => {
                 const updatedDate = moment(repo.updated_at).format('MMM D, YYYY');
                 
                 html += `
@@ -826,14 +826,18 @@
         function getLanguageColor(language) {
 const colors = {
     "JavaScript": "#f1e05a",
-    "Lua": "#015CAD"
+    "Lua": "#015CAD",
     "Python": "#3572A5",
+    "Vue": "#563d7c",
+    "HCL": "#89e051",
+    "GLSL": "#3572A5",
+    "Mathematica": "#3572A5",
     "Java": "#b07219",
     "TypeScript": "#2b7489",
     "C#": "#178600",
     "PHP": "#4F5D95",
-    "C++": "#f34b7d",
-    "C": "#555555",
+    "C++": "#555555",
+    "C": "#f34b7d",
     "Ruby": "#701516",
     "Go": "#00ADD8",
     "Swift": "#ffac45",
